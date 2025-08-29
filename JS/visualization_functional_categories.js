@@ -119,8 +119,8 @@ app.renderVisualization2 = function () {
   Promise.all([
     // d3.csv("/data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
     // d3.csv("/data/Category_descriptions.csv")
-    d3.csv("/tech-radar-viz/data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
-    d3.csv("/tech-radar-viz/data/Category_descriptions.csv")
+    d3.csv("/ImpactLabs-Tech-Radar/data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
+    d3.csv("/ImpactLabs-Tech-Radar/data/Category_descriptions.csv")
   ]).then(function ([data, categoryDescriptions]) {
     data = data.filter(d => d["cleaned_categories"] && d["cleaned_categories"].trim() !== "");
 

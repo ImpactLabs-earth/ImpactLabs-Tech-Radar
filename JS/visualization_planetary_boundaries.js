@@ -157,7 +157,7 @@ app.renderVisualization1 = function() {
   }
 
   // d3.csv("/data/Updated_DataFrame.csv").then(function(data) {
-  d3.csv("/tech-radar-viz/data/Updated_DataFrame.csv").then(function(data) {
+  d3.csv("/ImpactLabs-Tech-Radar/data/Updated_DataFrame.csv").then(function(data) {
     data = data.filter(d => d["planetary_boundary"] && d["planetary_boundary"].trim() !== "");
 
     const filterColumns = ["Tech Radar Categories ", "Industry", "Region of activity"];

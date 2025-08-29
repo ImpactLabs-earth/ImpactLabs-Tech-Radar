@@ -223,7 +223,7 @@ toggle.on("change", function () {
 // Runs when the page loads
 window.addEventListener("load", function () {
   // d3.csv("/data/deep_dives.csv").then(function (data) {
-  d3.csv("/tech-radar-viz/data/deep_dives.csv").then(function (data) {
+  d3.csv("/ImpactLabs-Tech-Radar/data/deep_dives.csv").then(function (data) {
     app.deepDivesMap = {};
     data.forEach(d => {
       const category = d.category;
