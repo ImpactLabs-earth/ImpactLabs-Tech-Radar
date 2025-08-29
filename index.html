@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta: character encoding and document title -->
+  <meta charset="UTF-8">
+  <title>ImpactLabs.earth - Tech Radar</title>
+
+  <!-- Load D3.js library (required for rendering the sunburst visualizations) -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <!-- Load seedrandom for deterministic random point placement in charts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+
+  <!-- Load Roboto font for consistent typography across the app -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+
+  <!-- Link to external CSS: styling for body, tooltip, info panel, toggle, etc. -->
+  <link rel="stylesheet" href="/CSS/styles.css">
+  <!-- <link rel="stylesheet" href="/tech-radar-viz/CSS/styles.css"> -->
+</head>
+<body>
+  <!-- Visualization Toggle Container:
+       - #vis-toggle-container holds labels and switch
+       - JS listens on #vis-toggle (checkbox) and toggles active classes on #vis1-label / #vis2-label
+       - Switches between renderVisualization1 (visualization.js) and renderVisualization2 (visualizationExploded.js) -->
+  <div id="vis-toggle-container">
+    <span id="vis1-label" class="active">Planetary Boundaries</span>
+    <label class="switch">
+      <input type="checkbox" id="vis-toggle">
+      <span class="slider"></span>
+    </label>
+    <span id="vis2-label">Functional categories</span>
+  </div>
+  <div id="back-arrow-container" style="position: fixed; top: 20px; right: 20px; z-index: 100; display: none;">
+    <button id="back-arrow">← Back</button>
+  </div>
+  <div id="search-container" style="position: fixed; top: 75px; right: 44px; z-index: 200;">
+    <input type="text" id="search-box" placeholder="Search by words..." style="padding: 8px; border-radius: 4px; border: 1px solid #5acc8e;">
+  </div>
+  <div id="filter-container" style="position: fixed; top: 115px; right: 30px; z-index: 100; display: flex; flex-direction: column; gap: 10px;">
+    <!-- Filters will be dynamically added here -->
+  </div>
+
+    <!-- Tooltip Container:
+       - Hidden by default (#tooltip display: none)
+       - JavaScript (eventHandlers.js) positions and shows this on mouseover of each data point -->
+  <div id="tooltip"></div>
+  <div id="info-panel">
+    <button id="close-panel">X</button>
+    <div id="info-content"></div>
+  </div>
+
+  <!-- Subcategory Title:
+     - #subcat-title shows the name of the hovered slice or group
+     - Controlled via mouseenter/mouseleave in visualization scripts -->
+  <div id="subcat-title"></div>
+
+  <!-- Main SVG Container:
+     - #chart is the root SVG for all D3 rendering
+     - viewBox ensures responsive scaling
+     - <defs> include a glow filter and radial gradient used by visualization.js -->
+  <svg id="chart" viewBox="0 0 800 800">
+    <defs>
+      <!-- Glow filter applied to arc outlines for emphasis -->
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+      <!-- Radial gradient for subtle macro category shadow (visualization.js) -->      
+      <radialGradient id="macroBlurGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+        <stop offset="0%" style="stop-color: rgba(200,200,200,0.5); stop-opacity: 1" />
+        <stop offset="100%" style="stop-color: rgba(200,200,200,0); stop-opacity: 0" />
+      </radialGradient>
+    </defs>
+  </svg>
+  <!-- ImpactLabs Logo:
+       - Positioned fixed in CSS
+       - Could be clickable if desired; currently static image -->  
+  <img id="logo" src="/assets/Logo-landscape-ImpactLabs-Earth.png" alt="ImpactLabs Logo">
+  <!-- <img id="logo" src="/tech-radar-viz/assets/Logo-landscape-ImpactLabs-Earth.png" alt="ImpactLabs Logo"> -->
+
+  <!-- JavaScript Includes:
+       - eventHandlers.js: wiring up UI controls, tooltips, info panel behavior
+       - visualization.js: renders the first (default) sunburst chart
+       - visualizationExploded.js: renders the alternate sunburst chart -->
+  <script src="/JS/eventHandlers.js"></script>
+  <script src="/JS/visualization_planetary_boundaries.js"></script>
+  <script src="/JS/visualization_functional_categories.js"></script>
+  <!-- <script src="/tech-radar-viz/JS/eventHandlers.js"></script>
+  <script src="/tech-radar-viz/JS/visualization_planetary_boundaries.js"></script>
+  <script src="/tech-radar-viz/JS/visualization_functional_categories.js"></script> -->
+</body>
+</html>
