@@ -130,8 +130,8 @@ app.renderVisualization2 = function() {
       return { x: r * Math.cos(angle - Math.PI / 2), y: r * Math.sin(angle - Math.PI / 2) };
     }
   
-    d3.csv("/data/Updated_Exploded_Tech_Radar_Categories_Data.csv").then(function(data) {
-    // d3.csv("/tech-radar-viz/data/Updated_Exploded_Tech_Radar_Categories_Data.csv").then(function(data) {
+    // d3.csv("/data/Updated_Exploded_Tech_Radar_Categories_Data.csv").then(function(data) {
+    d3.csv("/tech-radar-viz/data/Updated_Exploded_Tech_Radar_Categories_Data.csv").then(function(data) {
       const rootData = { name: "root", children: [] };
       const macroMap = {};
   
@@ -144,8 +144,8 @@ app.renderVisualization2 = function() {
         macroMap[macro][sub].companies.push({
           company: d["Company"],
           summary: d["Summary"],
-          logo: d["URL"] ? d["URL"].replace(/\/+$/, "") + "/favicon.ico" : ""
-          // logo: d["URL"] ? d["URL"].replace(/\/+$/, "") + "/tech-radar-viz/favicon.ico" : ""
+          // logo: d["URL"] ? d["URL"].replace(/\/+$/, "") + "/favicon.ico" : ""
+          logo: d["URL"] ? d["URL"].replace(/\/+$/, "") + "/tech-radar-viz/favicon.ico" : ""
         });
       });
   
