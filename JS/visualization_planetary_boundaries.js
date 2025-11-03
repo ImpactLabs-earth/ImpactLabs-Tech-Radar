@@ -160,7 +160,7 @@ app.renderVisualization1 = function() {
   d3.csv("/ImpactLabs-Tech-Radar/data/Updated_DataFrame.csv").then(function(data) {
     data = data.filter(d => d["planetary_boundary"] && d["planetary_boundary"].trim() !== "");
 
-    const filterColumns = ["Tech Radar Categories ", "Industry", "Region of activity"];
+    const filterColumns = ["Categories ", "Industry", "Region of activity"];
     app.createFilters(filterColumns, data);
 
     const pbMap = {};
