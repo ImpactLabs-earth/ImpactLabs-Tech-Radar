@@ -133,7 +133,7 @@ app.renderVisualization2 = function () {
       };
     });
 
-    const filterColumns = ["Industries", "Region of activity"];
+    const filterColumns = ["Industry", "Region of activity"];
     app.createFilters(filterColumns, data);
 
     const pbMap = {};
