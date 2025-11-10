@@ -354,8 +354,6 @@ app.applyFilters = function () {
     if (selectedValues.length > 0) filters[col] = selectedValues;
   });
 
-  let visibleCount = 0; //creat a counter for visible companies 
-
   d3.selectAll(".company-logo, .company-circle").each(function (d) {
     const companyData = d;
     let isVisible = true;
@@ -372,16 +370,12 @@ app.applyFilters = function () {
       if (!searchMatches) isVisible = false;
     }
 
-    if (isVisible) visibleCount += 1; //increment the counter
-
     d3.select(this)
       .style("pointer-events", isVisible ? "auto" : "none")
       .transition()
       .duration(300)
       .style("opacity", isVisible ? 1 : 0);
   });
-
-  d3.select("#visible-count").text(`Visible Companies: ${visibleCount}`);
 };
 
 // Function to add mouse and click actions to companies
