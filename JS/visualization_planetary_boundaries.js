@@ -157,13 +157,14 @@ app.renderVisualization1 = function() {
   }
 
   // d3.csv("/data/Updated_DataFrame.csv").then(function(data) {
-  d3.csv("/ImpactLabs-Tech-Radar/data/Updated_DataFrame.csv").then(function(data) {
+  d3.csv("./data/Updated_DataFrame.csv").then(function(data) {
     data = data.filter(d => d["planetary_boundary"] && d["planetary_boundary"].trim() !== "");
 
-    const filterColumns = ["Tech Radar Categories ", "Industry", "Region of activity"];
+    const filterColumns = ["Tech Radar Categories ", "Industry", "Impact"];
     app.createFilters(filterColumns, data);
 
     const pbMap = {};
+    const regionRawKey = Object.keys(data[0] || {}).find(k => k.toLowerCase().includes("region"));
     data.forEach(function(d) {
       const pb = d["planetary_boundary"].trim();
       if (!pbMap[pb]) {
@@ -193,9 +194,9 @@ app.renderVisualization1 = function() {
         websiteMonthlyVisitors: d["Website Monthly Visitors"],
         url: d["URL"],
         "Tech Radar Categories ": d["Tech Radar Categories "],
-        "Region of activity": d["Region of activity"],
+        "Impact": d["Impact"],
         "Industry": d["Industry"],
-        words: d["words"] // Include the words column
+        words: d["words"]
       });
     });
 
@@ -459,11 +460,7 @@ app.renderVisualization1 = function() {
     }
 
     app.applyFilters(data);
-    app.openInfoPanel(
-      "ImpactLabs Tech Radar - Planetary Boundary View",
-      "This visualization maps companies to planetary boundaries, highlighting their contributions to sustainability across various categories.",
-      "visualization"
-    );
+    
   }).catch(function(error) {
     console.error("Error loading CSV file:", error);
   });
