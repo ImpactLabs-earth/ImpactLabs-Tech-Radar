@@ -226,17 +226,7 @@ html {
 }
 
 /* Filter container styling */
-#filter-container {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  z-index: 200;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  flex-wrap: nowrap; /* Ensures filters stay in a single row */
-  align-items: flex-start;
-}
+
 
 .filter {
   position: relative;
@@ -253,18 +243,22 @@ html {
   cursor: pointer;
 }
 
+/* -- Filter Dropdown Fixes -- */
 .filter-dropdown {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  right: 0; /* MAGIC FIX: Anchors menu to the right so it expands inward! */
+  left: auto; 
   background: #fff;
   border: 1px solid #5acc8e;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   z-index: 201;
-  padding: 10px;
-  min-width: 150px;
+  min-width: 220px; /* Wider box to fit text */
+  padding: 0;
+  overflow: hidden;
+  margin-top: 5px;
 }
 
 .filter-dropdown.open {
@@ -272,18 +266,59 @@ html {
 }
 
 .filter-options {
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
+/* Make list items look like distinct clickable rows */
 .filter-options label {
   display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  margin-bottom: 0;
+  border-bottom: 1px solid #f2f4f8;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #2C3E50;
+}
+
+.filter-options label:hover {
+  background-color: #e0f7fa; /* Light cyan hover effect */
 }
 
 .filter-options input[type="checkbox"] {
-  margin-right: 5px;
+  margin-top: 3px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* -- New Active Tags Styling -- */
+.active-tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f2f4f8;
+  color: #2C3E50;
+  border: 1px solid #bdc3c7;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-family: 'Roboto', sans-serif;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.active-tag .remove-tag {
+  margin-left: 8px;
+  color: #e74c3c; /* Red X */
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.active-tag .remove-tag:hover {
+  color: #c0392b;
 }
 
 .clear-filters {

@@ -119,8 +119,8 @@ app.renderVisualization2 = function () {
   Promise.all([
     // d3.csv("/data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
     // d3.csv("/data/Category_descriptions.csv")
-    d3.csv("/ImpactLabs-Tech-Radar/data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
-    d3.csv("/ImpactLabs-Tech-Radar/data/Category_descriptions.csv")
+    d3.csv("./data/Updated_Exploded_Tech_Radar_Categories_Data.csv"),
+    d3.csv("./data/Category_descriptions.csv")
   ]).then(function ([data, categoryDescriptions]) {
     data = data.filter(d => d["cleaned_categories"] && d["cleaned_categories"].trim() !== "");
 
@@ -133,10 +133,11 @@ app.renderVisualization2 = function () {
       };
     });
 
-    const filterColumns = ["Industry", "Region of activity"];
+    const filterColumns = ["Industry", "Impact"];
     app.createFilters(filterColumns, data);
 
     const pbMap = {};
+    const regionRawKey = Object.keys(data[0] || {}).find(k => k.toLowerCase().includes("region"));
     data.forEach(function (d) {
       const pb = d["cleaned_categories"].trim();
       if (!pbMap[pb]) {
@@ -165,9 +166,10 @@ app.renderVisualization2 = function () {
         followersOnLinkedIn: d["Followers on Linkedin"],
         websiteMonthlyVisitors: d["Website Monthly Visitors"],
         url: d["URL"],
-        "Region of activity": d["Region of activity"],
+        "Impact": d["Impact"],
         "Industry": d["Industry"],
-        words: d["words"] // Include the words column
+        words: d["words"],
+        "Tech Radar Categories ": d["Tech Radar Categories "]
       });
     });
 
@@ -417,11 +419,7 @@ app.renderVisualization2 = function () {
     });
 
     app.applyFilters(data);
-    app.openInfoPanel(
-      "ImpactLens Tech Radar - Categories View",
-      "This visualization maps companies to technology radar categories, highlighting their roles in various industries and regions.",
-      "visualization"
-    );
+    
   }).catch(function (error) {
     console.error("Error loading CSV files:", error);
   });
