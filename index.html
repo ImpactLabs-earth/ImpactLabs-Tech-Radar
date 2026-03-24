@@ -111,6 +111,22 @@
 
   <!-- Table View Container-->
   <div id="table-view-container" style="display: none; position: absolute; top: 120px; left: 20px; right: 420px; bottom: 90px; background: #ffffff; z-index: 50; overflow: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); padding: 20px; border: 2px solid #5acc8e;">
+    
+    <div id="table-header-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f2f4f8;">
+      <h3 style="margin: 0; color: #2C3E50; font-family: 'Roboto', sans-serif; font-size: 20px;">Data Explorer</h3>
+      
+      <div id="table-category-filter" style="position: relative;">
+        <button id="table-cat-btn" style="background: #ffffff; color: #2C3E50; border: 2px solid #5acc8e; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-family: 'Roboto', sans-serif; font-weight: bold; display: flex; align-items: center; gap: 8px; transition: background 0.2s;">
+          <span style="font-size: 14px; color: #5acc8e;">▼</span> Filter by Category
+        </button>
+        
+        <div id="table-cat-dropdown" class="filter-dropdown" style="top: 100%; right: 0; margin-top: 8px; width: 280px; z-index: 300;">
+          <div class="filter-options" id="table-cat-options" style="max-height: 250px; overflow-y: auto;">
+            </div>
+        </div>
+      </div>
+    </div>
+    
     <table id="data-table" style="width: 100%; border-collapse: collapse; font-family: 'Roboto', sans-serif; font-size: 14px; text-align: left;">
       <thead>
         <tr style="background-color: #f2f4f8; border-bottom: 2px solid #5acc8e;">

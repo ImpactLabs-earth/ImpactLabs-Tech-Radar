@@ -306,18 +306,67 @@ app.createFilters = function (filterColumns, data) {
     }
   });
 
-  const clearButton = filterContainer.append("button")
+const clearButton = filterContainer.append("button")
     .attr("class", "clear-filters")
     .text("Clear")
     .on("click", () => {
-      filterContainer.selectAll(".filter-options input[type='checkbox']")
-        .property("checked", false);
+      filterContainer.selectAll(".filter-options input[type='checkbox']").property("checked", false);
+      d3.selectAll(".table-cat-checkbox").property("checked", false); // Also clear table filters!
       app.applyFilters(data);
     });
 
   filterContainer.selectAll(".filter-options input[type='checkbox']")
     .on("change", () => app.applyFilters(data));
-};
+
+  // --- NEW: Populate the Table Category Filter ---
+  const tableCatOptions = d3.select("#table-cat-options");
+  if (!tableCatOptions.empty()) {
+    tableCatOptions.selectAll("*").remove();
+    
+    // Find the exact category column key (handles "Tech Radar Categories " with spaces)
+    const catRawKey = rawKeys.find(k => k.toLowerCase().includes("tech radar") || k.toLowerCase().includes("cleaned_categories"));
+    
+    const uniqueCategories = [...new Set(data.flatMap(d => {
+      let val = d[catRawKey || "Tech Radar Categories "];
+      return val ? String(val).split(",").map(v => v.replace(/\s*\([^)]*\)/g, "").trim()).filter(Boolean) : [];
+    }))].sort();
+
+    uniqueCategories.forEach(cat => {
+      const label = tableCatOptions.append("label").style("display", "flex").style("align-items", "flex-start").style("padding", "10px 12px").style("border-bottom", "1px solid #f2f4f8").style("cursor", "pointer");
+      label.append("input")
+        .attr("type", "checkbox")
+        .attr("value", cat)
+        .attr("class", "table-cat-checkbox")
+        .style("margin-top", "3px")
+        .style("margin-right", "10px")
+        .style("cursor", "pointer");
+      label.append("span").text(cat).style("font-family", "'Roboto', sans-serif").style("font-size", "14px").style("color", "#2C3E50");
+    });
+
+    // When a user clicks a table filter, re-render the table instantly
+    d3.selectAll(".table-cat-checkbox").on("change", () => app.renderTable());
+  }
+
+  // Handle clicking the Table Filter Button
+  d3.select("#table-cat-btn").on("click", function (event) {
+    event.stopPropagation();
+    const dropdown = d3.select("#table-cat-dropdown");
+    const isOpen = dropdown.classed("open");
+    filterContainer.selectAll(".filter-dropdown").classed("open", false); // Close global filters
+    dropdown.classed("open", !isOpen);
+  });
+
+  // Ensure clicking outside closes the table dropdown too
+  d3.select(document).on("click", function (event) {
+    if (!event.target.closest(".filter")) {
+      filterContainer.selectAll(".filter-dropdown").classed("open", false);
+    }
+    if (!event.target.closest("#table-category-filter")) {
+      d3.select("#table-cat-dropdown").classed("open", false);
+    }
+  });
+}; // <-- End of app.createFilters function
+
 
 // Function to filter the chart based on selections and update the counter
 app.applyFilters = function (data) {
@@ -736,50 +785,66 @@ app.revertZoom = function () {
 app.isTableView = false;
 
 app.renderTable = function () {
-  // 1. Scrape the data from the dots currently visible on the chart
+  // 1. Get selected categories from the new Table Filter
+  const selectedTableCats = [];
+  d3.selectAll(".table-cat-checkbox:checked").each(function () {
+    selectedTableCats.push(this.value);
+  });
+
+  // 2. Scrape the data from the dots currently visible on the chart
   const visibleData = [];
   const seenCompanies = new Set();
   
   d3.selectAll(".company-logo, .company-circle").each(function (d) {
-    // Check pointer-events instead of opacity because opacity takes 300ms to fade!
+    // Only look at dots that passed the global right-side filters
     if (d3.select(this).style("pointer-events") === "auto") { 
-      if (!seenCompanies.has(d.company)) {
+      
+      // Clean up the categories
+      let rawCategories = d["Tech Radar Categories "] || "N/A";
+      let cleanedCategories = rawCategories.replace(/\s*\([^)]*\)/g, "").trim();
+      let companyCats = cleanedCategories.split(",").map(c => c.trim());
+
+      // Apply the Table-Specific Filter
+      let passesTableFilter = true;
+      if (selectedTableCats.length > 0) {
+        passesTableFilter = selectedTableCats.some(cat => companyCats.includes(cat));
+      }
+
+      // If it passes, add it to the table!
+      if (passesTableFilter && !seenCompanies.has(d.company)) {
         seenCompanies.add(d.company);
+        
+        // Save cleaned categories directly onto the object so we don't calculate it again
+        d.displayCategories = cleanedCategories; 
         visibleData.push(d);
       }
     }
   });
 
-  // 2. Clear out the old table rows
+  // 3. Clear out the old table rows
   const tbody = d3.select("#data-table tbody");
   tbody.selectAll("*").remove();
 
-  // 3. Build the new READ-ONLY rows
+  // 4. Build the new READ-ONLY rows
   visibleData.forEach(d => {
     const tr = tbody.append("tr").style("border-bottom", "1px solid #ddd");
     
-    // Clean up the categories by removing anything inside parentheses ()
-    let rawCategories = d["Tech Radar Categories "] || "N/A";
-    let cleanedCategories = rawCategories.replace(/\s*\([^)]*\)/g, "").trim();
-    
-    // Clean up the year by forcing it to be a whole number
     let displayYear = "N/A";
     if (d.yearCreation && d.yearCreation.trim() !== "") {
       const parsedYear = parseInt(d.yearCreation, 10);
-      if (!isNaN(parsedYear)) {
-        displayYear = parsedYear;
-      } else {
-        displayYear = d.yearCreation; 
-      }
+      displayYear = !isNaN(parsedYear) ? parsedYear : d.yearCreation; 
     }
     
-    // Create the table cells (contenteditable is removed!)
     tr.append("td").style("padding", "10px").text(d.company || "N/A");
     tr.append("td").style("padding", "10px").text(displayYear);
-    tr.append("td").style("padding", "10px").text(cleanedCategories);
+    tr.append("td").style("padding", "10px").text(d.displayCategories);
     tr.append("td").style("padding", "10px").text(d.summary || "N/A");
   });
+
+  // --- NEW: Update the main counter to perfectly match the table rows! ---
+  d3.select("#counter-value").text(visibleData.length);
 };
+
 
 // --- EXPORT TO CSV LOGIC ---
 document.getElementById("export-csv-btn").addEventListener("click", function () {
