@@ -419,8 +419,9 @@ app.applyFilters = function (data) {
     });
 
     if (app.searchTerm && app.searchTerm.trim() !== '') {
-      const words = companyData.words ? companyData.words.toLowerCase().split(',') : [];
-      const searchMatches = words.some(word => word.includes(app.searchTerm));
+      const wordsStr = companyData.words ? companyData.words.toLowerCase() : "";
+      const summaryStr = companyData.summary ? companyData.summary.toLowerCase() : "";
+      const searchMatches = wordsStr.includes(app.searchTerm) || summaryStr.includes(app.searchTerm);
       if (!searchMatches) isVisible = false;
     }
 
